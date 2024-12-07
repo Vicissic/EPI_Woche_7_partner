@@ -14,12 +14,19 @@ class Product:
 
 
 class Menu:
-    def __init__(self, csv_path):
+    """Erstellt das Menü als Liste von Produt Objekten
+
+    :param csv_path: Der Path vom Menü als csv
+    :param products: Liste von Produkten
+    """
+
+    def __init__(self, csv_path: str):
         self.csv_path = csv_path
         self.products = []
 
     def create_menu(self):
-        with open(self.csv_path, mode="r") as csv_file:
+        """Befüllt die Liste products mit Objekten Product durch lesen der csv Datei"""
+        with open(self.csv_path, mode="r", encoding="utf-8") as csv_file:
             next(
                 csv_file
             )  # Die erste Zeile ist fuer unsere implementierung nicht relevant
@@ -34,14 +41,28 @@ class Menu:
                     )
                 )
 
-    def get_product_info(self, product_name):
+    def get_product_info(self, product_name: str):
+        """Findet das entsprechende Objekt falls es exisitiert, sonst None
+
+        :param product_name: Der Name von was bestellt werden soll
+        :return: Das entsprechende Objekt Product
+        :rtype: Product Objekt
+        """
         for our_products in self.products:
             if our_products.name == product_name:
                 return our_products
-        print("Das Produkt '{product_name}' konnte nicht gefunden werden")
-        return
+        print(f"Das Produkt '{product_name}' konnte nicht gefunden werden")
+        return None
+
+    def show_menu(self):
+        """Printet das Menü in der Konsole aus"""
+        for product in self.products:
+            print(
+                f"{product.name},Preis:{product.price},Kategorie:{product.category},{product.typ}"
+            )
 
 
 a = Menu("food.csv")
 a.create_menu()
 print([i.name for i in a.products])
+a.show_menu()
