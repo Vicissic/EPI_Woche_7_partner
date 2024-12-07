@@ -62,6 +62,25 @@ class Menu:
             )
 
 
+class OrderProduct(Product):
+    def __init__(self, product: Product, quantity: int, extra_info: list = []):
+        self.product = product
+        self.quantity = quantity
+        self.extra_info = extra_info  # Default leere Liste (pylint beschwert sich aber ich weiß nicht warum)
+
+    def calc_price(self):
+        """Berechnet Preis vom einzelnen bestellten Produkt
+
+        :return: Preis
+        :rtype: float
+        """
+        price_of_item = self.product.price
+        for i in self.extra_info:
+            if "extra" in i:
+                price_of_item += 1
+        return price_of_item * self.quantity
+
+
 a = Menu("food.csv")
 a.create_menu()
 print([i.name for i in a.products])
