@@ -121,6 +121,14 @@ class OrderTable(Menu):
         return Product("", "", "", 0)  # Sollte nicht vorkommen
 
     def extra_info(self, prod_str):
+        """Funktion welche nach Sonderwünschen in der Konsole fragt
+
+        :param prod_str: Der Name vom Produkt
+        :type prod_str: str
+        :return: Alle Sonderwünsche
+        :rtype: list
+        """
+        # Could be a function of OrderProducts maybe?
         mod_list = []
         modification = input(
             f"Please enter a special request you would like to add to {prod_str}"
@@ -140,20 +148,30 @@ class OrderTable(Menu):
         return mod_list
 
     def get_orders(self):
+        """CLI welche nach Inputs fragt und Bestellungen sammelt
+
+        :return:
+        :rtype:
+        """
         super().create_menu()
         super().show_menu()
         while not self.order_finished:
             prod_str = input(
                 "Please input Product you would like to "
-                "order [enter q if you are done ordering]: \n"
+                "order [enter 'q' if you are done ordering]: \n"
+                "order [enter 'r' if you want to remove some previous order]: \n"
             )
             if prod_str == "q":
                 break
+            if prod_str == "r":
+                # TODO implement function deleting orders
+                pass
             if not self.check_product_in_menu(prod_str):
                 print("That product does not exist in our Menu, please try again \n")
                 continue
             product = OrderTable.get_prod_from_prod_str(self, prod_str)
             mod_list = OrderTable.extra_info(self, prod_str)
+            # TODO mache hier das Programm stabil, also implementiere hier wieder Abbruchbedingung
             quantity = int(
                 input(
                     f"""Please input the amount of {prod_str} of you would like to order: """
@@ -165,25 +183,48 @@ class OrderTable(Menu):
         return self.orders
 
     def calculate_sum(self):
+        """Berechnet Summe der Preise aller Bestellungen
+
+        :return: Die Summe
+        :rtype: float
+        """
         final_sum = 0
         for i in self.orders:
             final_sum += i.calc_price()
         return final_sum
 
-    def get_receipt(self, receipt_path="receipt.txt"):
+    def get_receipt(self, receipt_path: str = "receipt.txt"):
+        """Erstellt receipt.txt Datei
+
+        :param receipt_path: Name der Datei
+        """
+        # kann man theoretisch schöner machen, aber die Theorie beachtet nicht
+        # die Faulheit vom Verfasser
         with open(receipt_path, mode="w", encoding="utf-8") as receipt_file:
-            for orders in self.orders:
-                receipt_file.write(str(orders.product.price))
-                # TODO: implement write to file
+            receipt_file.write("product name" + "\t")
+            receipt_file.write("quantity" + "\t")
+            receipt_file.write("product price" + "\t")
+            receipt_file.write("special requests" + "\t")
+            receipt_file.write("price with special requests" + "\n")
+            for order in self.orders:
+                receipt_file.write(str(order.product.name) + "\t")
+                receipt_file.write(str(order.quantity) + "\t")
+                receipt_file.write(str(order.product.price) + "\t")
+                receipt_file.write(str(order.extra_info) + "\t")
+                receipt_file.write(str(order.calc_price()) + "\n")
+            receipt_file.write(
+                "\n"
+                + "The total sum of your order is : "
+                + str(OrderTable.calculate_sum(self))
+            )
 
 
 if __name__ == "__main__":
+    ####WICHTIG UND NUTZVOLL:
+    ####VICTOR NUTZT als Command im Terminal: "python restaurant.py < test_inputs.txt" als input
+    ####für testen, damit man nicht immer wieder das selbe eingeben muss.
+    #### Sonst wie gewohnt einfach python restaurant.py in die Konsole eingeben
+    # TODO: Implement Testfälle für alle Funktionen, UML Diagramm und Dokumentation
     b = OrderTable("food.csv")
     b.get_orders()
     b.get_receipt()
-    ####VICTOR NUTZT als Command im Terminal: "python restaurant.py < input.txt" als input
-    ####für testen, damit man nicht immer wieder das selbe eingeben muss
-# a = Menu("food.csv")
-# a.create_menu()
-# print([i.name for i in a.products])
-# a.show_menu()

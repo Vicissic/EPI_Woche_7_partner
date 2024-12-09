@@ -1,1 +1,4 @@
-4.09.0
+product name	quantity	product price	special requests	price with special requests
+FANTA (0.4)	2	3.5	[]	7.0
+
+The total sum of your order is : 7.0
