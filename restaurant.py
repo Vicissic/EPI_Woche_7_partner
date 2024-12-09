@@ -27,9 +27,8 @@ class Menu:
     def create_menu(self):
         """Befüllt die Liste products mit Objekten Product durch lesen der csv Datei"""
         with open(self.csv_path, mode="r", encoding="utf-8") as csv_file:
-            next(
-                csv_file
-            )  # Die erste Zeile ist fuer unsere implementierung nicht relevant
+            # Die erste Zeile ist fuer unsere implementierung nicht relevant
+            next(csv_file)
             for row in csv_file:
                 attribute_list = row.strip().split(";")
                 self.products.append(
@@ -62,7 +61,7 @@ class Menu:
             )
 
 
-class OrderProduct(Product):
+class OrderProduct:
     def __init__(self, product: Product, quantity: int, extra_info: list = []):
         self.product = product
         self.quantity = quantity
@@ -81,7 +80,50 @@ class OrderProduct(Product):
         return price_of_item * self.quantity
 
 
-a = Menu("food.csv")
-a.create_menu()
-print([i.name for i in a.products])
-a.show_menu()
+class OrderTable(Menu):
+    """Bestellungen für einen einzelnen Tisch
+
+    :param orders: Liste von OrderProducts
+    :param order_finished: Ob die Bestellung noch ausgeführt werden soll oder nicht
+    """
+
+    def __init__(self, csv_path: str, orders=[], order_finished=False):
+        super().__init__(csv_path)
+        self.orders = orders
+        self.order_finished = order_finished
+
+    def check_product_in_menu(self, product_str: str):
+        all_prod_list = [i.name.lower() for i in self.products]
+        if product_str.lower() in all_prod_list:
+            return True
+        return False
+
+    def get_prod_from_prod_str(self, product_str: str):
+        for i in self.products:
+            if product_str.lower() == i.name.lower():
+                return i
+        return False  # Sollte nicht vorkommen
+
+    def get_orders(self):
+        super().create_menu()
+        super().show_menu()
+        while not self.order_finished:
+            prod_str = input(
+                "Please input Product you would like to order [enter q if you are done ordering]: "
+            )
+            if prod_str == "q":
+                break
+            if not self.check_product_in_menu(prod_str):
+                print("That product does not exist in our Menu, please try again")
+                continue
+            # TODO: fuege hier funktionalitaeten hinzu
+
+        return self.orders
+
+
+# a = Menu("food.csv")
+# a.create_menu()
+# print([i.name for i in a.products])
+# a.show_menu()
+b = OrderTable("food.csv")
+b.get_orders()
