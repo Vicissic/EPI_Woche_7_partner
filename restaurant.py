@@ -31,12 +31,16 @@ class Menu:
             next(csv_file)
             for row in csv_file:
                 attribute_list = row.strip().split(";")
+                price_prod = attribute_list[3]
+                price_prod = float(
+                    price_prod.replace(",", ".")
+                )  # python nimmt keine Komma an
                 self.products.append(
                     Product(
                         attribute_list[0],
                         attribute_list[1],
                         attribute_list[2],
-                        float(attribute_list[3]),  # Kosten ist ein float
+                        price_prod,  # Kosten ist ein float
                     )
                 )
 
@@ -62,10 +66,10 @@ class Menu:
 
 
 class OrderProduct:
-    def __init__(self, product: Product, quantity: int, extra_info: list = []):
+    def __init__(self, product: Product, quantity: int, extra_info: list):
         self.product = product
         self.quantity = quantity
-        self.extra_info = extra_info  # Default leere Liste (pylint beschwert sich aber ich weiß nicht warum)
+        self.extra_info = extra_info
 
     def calc_price(self):
         """Berechnet Preis vom einzelnen bestellten Produkt
@@ -114,20 +118,20 @@ class OrderTable(Menu):
         for i in self.products:
             if product_str == i.name:
                 return i
-        return Product(False, False, False, False)  # Sollte nicht vorkommen
+        return Product("", "", "", 0)  # Sollte nicht vorkommen
 
     def extra_info(self, prod_str):
         mod_list = []
         modification = input(
             f"Please enter a special request you would like to add to {prod_str}"
-            "(Press enter if you have no additional requests): "
+            "(Press enter if you have no additional requests): \n"
         )
         if modification != "":
             mod_list.append(modification)
             while True:
                 modification = input(
                     f"Please enter another special request you would like to add to {prod_str}"
-                    "(Press enter if you have no additional requests): "
+                    "(Press enter if you have no additional special requests): \n"
                 )
                 if modification == "":
                     break
@@ -140,18 +144,19 @@ class OrderTable(Menu):
         super().show_menu()
         while not self.order_finished:
             prod_str = input(
-                "Please input Product you would like to order [enter q if you are done ordering]: "
+                "Please input Product you would like to "
+                "order [enter q if you are done ordering]: \n"
             )
             if prod_str == "q":
                 break
             if not self.check_product_in_menu(prod_str):
-                print("That product does not exist in our Menu, please try again")
+                print("That product does not exist in our Menu, please try again \n")
                 continue
             product = OrderTable.get_prod_from_prod_str(self, prod_str)
             mod_list = OrderTable.extra_info(self, prod_str)
             quantity = int(
                 input(
-                    f"""Please input the amount {prod_str} of you would like to order: """
+                    f"""Please input the amount of {prod_str} of you would like to order: """
                 )
             )
             order = OrderProduct(product, quantity, mod_list)
@@ -168,13 +173,17 @@ class OrderTable(Menu):
     def get_receipt(self, receipt_path="receipt.txt"):
         with open(receipt_path, mode="w", encoding="utf-8") as receipt_file:
             for orders in self.orders:
-                receipt_file.write(orders.product.price)
+                receipt_file.write(str(orders.product.price))
                 # TODO: implement write to file
 
 
+if __name__ == "__main__":
+    b = OrderTable("food.csv")
+    b.get_orders()
+    b.get_receipt()
+    ####VICTOR NUTZT als Command im Terminal: "python restaurant.py < input.txt" als input
+    ####für testen, damit man nicht immer wieder das selbe eingeben muss
 # a = Menu("food.csv")
 # a.create_menu()
 # print([i.name for i in a.products])
 # a.show_menu()
-b = OrderTable("food.csv")
-b.get_orders()
