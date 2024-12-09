@@ -6,7 +6,7 @@ __author__ = "7419816, Velesco, 7742219, Kowalke Jeri"
 
 
 class Product:
-    def __init__(self, name, typ, category, price):
+    def __init__(self, name: str, typ: str, category: str, price: float):
         self.name = name
         self.typ = typ
         self.category = category
@@ -36,7 +36,7 @@ class Menu:
                         attribute_list[0],
                         attribute_list[1],
                         attribute_list[2],
-                        attribute_list[3],
+                        float(attribute_list[3]),  # Kosten ist ein float
                     )
                 )
 
@@ -87,22 +87,53 @@ class OrderTable(Menu):
     :param order_finished: Ob die Bestellung noch ausgeführt werden soll oder nicht
     """
 
-    def __init__(self, csv_path: str, orders=[], order_finished=False):
+    def __init__(self, csv_path: str):
         super().__init__(csv_path)
-        self.orders = orders
-        self.order_finished = order_finished
+        self.orders = []
+        self.order_finished = False
 
     def check_product_in_menu(self, product_str: str):
-        all_prod_list = [i.name.lower() for i in self.products]
-        if product_str.lower() in all_prod_list:
+        """Schaut ob das Produkt im Menü vorhanden ist
+
+        :param product_str: Der Name vom Produkt
+        :return: True or False
+        :rtype: boolean
+        """
+        all_prod_list = [i.name for i in self.products]
+        if product_str in all_prod_list:
             return True
         return False
 
     def get_prod_from_prod_str(self, product_str: str):
+        """Gibt das Produkt Objekt basierend auf der string zurück
+
+        :param product_str:
+        :return: das entsprechende Produkt
+        :rtype: Product Objekt
+        """
         for i in self.products:
-            if product_str.lower() == i.name.lower():
+            if product_str == i.name:
                 return i
-        return False  # Sollte nicht vorkommen
+        return Product(False, False, False, False)  # Sollte nicht vorkommen
+
+    def extra_info(self, prod_str):
+        mod_list = []
+        modification = input(
+            f"Please enter a special request you would like to add to {prod_str}"
+            "(Press enter if you have no additional requests): "
+        )
+        if modification != "":
+            mod_list.append(modification)
+            while True:
+                modification = input(
+                    f"Please enter another special request you would like to add to {prod_str}"
+                    "(Press enter if you have no additional requests): "
+                )
+                if modification == "":
+                    break
+                mod_list.append(modification)
+
+        return mod_list
 
     def get_orders(self):
         super().create_menu()
@@ -116,9 +147,29 @@ class OrderTable(Menu):
             if not self.check_product_in_menu(prod_str):
                 print("That product does not exist in our Menu, please try again")
                 continue
-            # TODO: fuege hier funktionalitaeten hinzu
+            product = OrderTable.get_prod_from_prod_str(self, prod_str)
+            mod_list = OrderTable.extra_info(self, prod_str)
+            quantity = int(
+                input(
+                    f"""Please input the amount {prod_str} of you would like to order: """
+                )
+            )
+            order = OrderProduct(product, quantity, mod_list)
+            self.orders.append(order)
 
         return self.orders
+
+    def calculate_sum(self):
+        final_sum = 0
+        for i in self.orders:
+            final_sum += i.calc_price()
+        return final_sum
+
+    def get_receipt(self, receipt_path="receipt.txt"):
+        with open(receipt_path, mode="w", encoding="utf-8") as receipt_file:
+            for orders in self.orders:
+                receipt_file.write(orders.product.price)
+                # TODO: implement write to file
 
 
 # a = Menu("food.csv")
