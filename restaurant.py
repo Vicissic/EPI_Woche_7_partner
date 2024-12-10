@@ -223,7 +223,8 @@ if __name__ == "__main__":
     ####WICHTIG UND NUTZVOLL:
     ####VICTOR NUTZT als Command im Terminal: "python restaurant.py < test_inputs.txt" als input
     ####für testen, damit man nicht immer wieder das selbe eingeben muss.
-    #### Sonst wie gewohnt einfach python restaurant.py in die Konsole eingeben
+    #### Sonst wie gewohnt einfach python restaurant.py in die Konsole eingeben.
+    ####classes.png erstellt mit Befehl "pyreverse -o png restaurant.py" (pylint dependency)
     # TODO: Implement Testfälle für alle Funktionen, UML Diagramm und Dokumentation
     b = OrderTable("food.csv")
     b.get_orders()
