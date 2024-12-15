@@ -166,10 +166,11 @@ class OrderTable(Menu):
 
         return index_orders
 
-    def delete_order(self, order, mod_list):
+    def delete_order(self):  # , order, mod_list
         """
         Erst anzeigen, welche orders da sind und aus denen dann eine
-        löschen. Man soll so viele löschen
+        löschen. Man soll so viele löschen könne wie man will
+        Mit User input!
         können wie man will und abbrechen mit q.
         :param order:
         :param mod_list:
@@ -181,10 +182,10 @@ class OrderTable(Menu):
                 "q"]
 
             #  Zeigt die bisherigen Bestellungen an
-            self.show_order(self.orders, mod_list)
+            self.show_order(self.orders)  # , mod_list
             order_to_delete = input(
-                "Welche Order möchtest du löschen? \n "
-                "(Index angeben oder Abbrechen 'q'): ")
+                "Which order would you like to delete? \n "
+                "(Insert index or abort 'q'): ")
 
             if order_to_delete not in possibles:
                 continue
@@ -192,12 +193,24 @@ class OrderTable(Menu):
                 break
             else:
                 order_to_delete = int(order_to_delete)
-                self.orders.pop(order_to_delete)
-                print(f"Es wurde {order.product.name} gelöscht!")
+                deleted_order = self.orders.pop(order_to_delete)
+                print(
+                    f"{deleted_order.product.name} was deleted!")  # order.product.name
+
+    def add_previous_orders(self, prev_order):
+        """
+
+        :param prev_order: list of orders (objects of type Product)
+        :return:
+        """
+        for order in prev_order:
+            self.orders.append(order)
+        return self.orders
 
     def get_orders(self):
         """CLI welche nach Inputs fragt und Bestellungen sammelt
 
+        :param orders: mögliche Bestellungen von davor
         :return:
         :rtype:
         """
@@ -212,7 +225,8 @@ class OrderTable(Menu):
             if prod_str == "q":
                 break
             if prod_str == "r":
-                self.delete_order(order, mod_list)
+                self.delete_order()
+                continue
 
             if not self.check_product_in_menu(prod_str):
                 print(

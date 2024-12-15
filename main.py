@@ -33,12 +33,14 @@ def main():
         table_name = input("Which table do you want to edit or create?: ")
         if table_name in tables.keys():  # Fall, bereits existierender Tisch
             table = r.OrderTable("food.csv")
-            order = table.get_orders()
-            table.show_order(order)
-            tables[table_name].append(order)
-            # TODO Wie bekommt man Zugriff auf die "alten" orders? bzw wie kann man in diesen was verändern löschen
-            # TODO die methode get_orders kann nicht direkt verwendet werden.
-        else:  # Fall wo der Tisch neu ist
+            table.add_previous_orders(tables[table_name])  # hinzufügen
+            # von den alten Bestellungen zu der Liste orders
+
+            new_order = table.get_orders()
+            table.show_order(new_order)
+            tables[table_name].append(new_order)
+
+        else:  # Fall, wo der Tisch neu ist
             while True:
                 inp = input("Do you want to edit the orders or do you want"
                             " the check? (order or check) \n"
@@ -50,7 +52,9 @@ def main():
                     tables[table_name] = order
                     #  [order[i].product.name for i in range(len(order))] Nur ein Test
                 elif inp == "check":
-                    ord.get_receipt()
+                    #new_order.get_receipt()  muss auch noch richtig gemacht werden
+                    # TODO Tisch soll gelöscht werden und ich glaube, dass es insgesamt nur eine Rechnung gibt
+                    # TODO also müssen es noch iwie einrichten, dass es pro Tisch eine rechnung gibt
 
                 elif inp == "q":
                     break
