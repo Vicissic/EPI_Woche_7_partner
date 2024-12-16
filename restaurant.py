@@ -134,7 +134,7 @@ class OrderTable(Menu):
         # Could be a function of OrderProducts maybe?
         mod_list = []
         modification = input(
-            f"Please enter a special request you would like to add to {prod_str}"
+            f"Please enter a special request you would like to add to {prod_str} "
             "(Press enter if you have no additional requests): \n"
         )
         if modification != "":
@@ -150,23 +150,26 @@ class OrderTable(Menu):
 
         return mod_list
 
-    def show_order(self, orders: list):
+    def show_order(self):
+        # Die Idee bei solchen Funktionen ist sich selbst zu referenzieren und nicht
+        # auf eine potenziellen unabhängige Liste orders zuzugreifen, die Variable
+        # self hat bereits orders als Attribut
         """
         Soll die bereits gegebenen Orders zeigen bzw. auch
         ordnen, sodass man mit einem Index darauf zugreifen kann.
         :param orders:
         :return:
         """
-        index_orders = list(enumerate(orders))
 
-        print("Deine bisherigen Bestellungen sind: \n")
-        for i, order in index_orders:
+        print("Your current orders are: \n")
+        for i, order in enumerate(self.orders):
             print(
                 f"({i}) {order.product.name} mit {order.extra_info}"
                 f", Anzahl {order.quantity}\n"
             )
 
-        return index_orders
+        # Muss man hier was returnen oder ist soll das Nur Output sein?
+        return
 
     def delete_order(self):  # , order, mod_list
         """
@@ -183,7 +186,7 @@ class OrderTable(Menu):
             possibles = [str(i) for i in range(len(self.orders))] + ["q"]
 
             #  Zeigt die bisherigen Bestellungen an
-            self.show_order(self.orders)  # , mod_list
+            OrderTable.show_order(self)  # , mod_list
             order_to_delete = input(
                 "Which order would you like to delete? \n "
                 "(Insert index or abort 'q'): "
@@ -199,6 +202,7 @@ class OrderTable(Menu):
             print(f"{deleted_order.product.name} was deleted!")  # order.product.name
 
     def add_previous_orders(self, prev_order: list[Product]):
+        # Brauchen wir glaube ich nicht mehr
         """
 
         :param prev_order: list of orders (objects of type Product)
@@ -219,9 +223,9 @@ class OrderTable(Menu):
         super().show_menu()
         while not self.order_finished:
             prod_str = input(
+                "\nPlease input Product you would like to order\n"
                 "[Enter 'q' if you are done ordering] \n"
-                "[Enter 'r' if you want to remove some previous order] \n"
-                "Please input Product you would like to order: "
+                "[Enter 'r' if you want to remove some previous order]: "
             )
             if prod_str == "q":
                 break
@@ -247,8 +251,6 @@ class OrderTable(Menu):
                     continue
             order = OrderProduct(product, quantity, mod_list)
             self.orders.append(order)
-
-        return self.orders
 
     def calculate_sum(self):
         """Berechnet Summe der Preise aller Bestellungen
