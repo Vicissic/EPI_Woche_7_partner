@@ -18,7 +18,6 @@ def show_tables(tables):
     print("These are the current existing tables:")
     for i, table_name in enumerate(tables.keys()):
         print(f"({i}) {table_name} \n")
-    return
 
 
 def main():
@@ -27,37 +26,41 @@ def main():
     :return:
     """
     tables = {}
+    # ICH habe die Idee hinter dem Dictionary geändert, es soll nun
+    # die Elemente {TABLE_NAME: ORDERPRODUCT_objekt} haben
 
     while True:
         show_tables(tables)
-        table_name = input("Which table do you want to edit or create?: ")
-        if table_name in tables.keys():  # Fall, bereits existierender Tisch
-            table = r.OrderTable("food.csv")
-            table.add_previous_orders(tables[table_name])  # hinzufügen
-            # von den alten Bestellungen zu der Liste orders
+        table_name = input(
+            "Which table do you want to order for, get the check from "
+            "or add to a previous order? (Please input name of table or "
+            "type 'q' to abort): "
+        )
+        if table_name == "q":
+            print("Thanks for using our software and have a nice day")
+            break
+        # .keys() muss man nicht spezifizieren
+        table = tables.get(table_name, r.OrderTable("food.csv"))
+        while True:
+            inp = input(
+                "Do you want to edit orders or do you want"
+                " the check? (input 'order' or 'check') \n"
+                "(or get back to Table select ('q')): "
+            )
+            if inp == "q":
+                break
+            if inp == "order":
+                table.order_finished = False
+                table.get_orders()
+                table.show_order()
+                tables[table_name] = table
+            elif inp == "check":
+                tables.pop(table_name)
+                print(f"the table {table_name} has been removed from available tables")
+                print(f"The receipt can be found in the file {table_name}_receipt.txt")
+                table.get_receipt(receipt_path=f"{table_name}_receipt.txt")
+                break
 
-            new_order = table.get_orders()
-            table.show_order(new_order)
-            tables[table_name].append(new_order)
 
-        else:  # Fall, wo der Tisch neu ist
-            while True:
-                inp = input("Do you want to edit the orders or do you want"
-                            " the check? (order or check) \n"
-                            "(or get back to Table select (q): ")
-                if inp == "order":
-                    table = r.OrderTable("food.csv")
-                    order = table.get_orders()
-                    table.show_order(order)
-                    tables[table_name] = order
-                    #  [order[i].product.name for i in range(len(order))] Nur ein Test
-                elif inp == "check":
-                    #new_order.get_receipt()  muss auch noch richtig gemacht werden
-                    # TODO Tisch soll gelöscht werden und ich glaube, dass es insgesamt nur eine Rechnung gibt
-                    # TODO also müssen es noch iwie einrichten, dass es pro Tisch eine rechnung gibt
-
-                elif inp == "q":
-                    break
-
-
-main()
+if __name__ == "__main__":
+    main()

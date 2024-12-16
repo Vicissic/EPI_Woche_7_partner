@@ -1,3 +1,5 @@
+table1
+order
 BEER
 
 3
@@ -5,4 +7,15 @@ CLASSIC-Burger
 extra cheese
 
 2
+q
+q
+table2
+order
+PIZZA-MARGARITA
+no tomatos
+
+1
+q
+check
+q
 q

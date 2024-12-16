@@ -1,0 +1,4 @@
+product name	quantity	product price	special requests	price with special requests
+PIZZA-MARGARITA	1	9.0	['no tomatos']	9.0
+
+The total sum of your order is : 9.0

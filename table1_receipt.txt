@@ -1,0 +1,5 @@
+product name	quantity	product price	special requests	price with special requests
+BEER	3	4.0	[]	12.0
+CLASSIC-Burger	2	9.0	['extra cheese']	20.0
+
+The total sum of your order is : 32.0
