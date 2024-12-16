@@ -150,7 +150,7 @@ class OrderTable(Menu):
 
         return mod_list
 
-    def show_order(self, orders: list, mod_list=[]):
+    def show_order(self, orders: list):
         """
         Soll die bereits gegebenen Orders zeigen bzw. auch
         ordnen, sodass man mit einem Index darauf zugreifen kann.
@@ -161,8 +161,10 @@ class OrderTable(Menu):
 
         print("Deine bisherigen Bestellungen sind: \n")
         for i, order in index_orders:
-            print(f"({i}) {order.product.name} mit {order.extra_info}"
-                  f", Anzahl {order.quantity}\n")
+            print(
+                f"({i}) {order.product.name} mit {order.extra_info}"
+                f", Anzahl {order.quantity}\n"
+            )
 
         return index_orders
 
@@ -172,32 +174,31 @@ class OrderTable(Menu):
         löschen. Man soll so viele löschen könne wie man will
         Mit User input!
         können wie man will und abbrechen mit q.
-        :param order:
-        :param mod_list:
         :return:
         """
         while True:
             #  für Robustheit
-            possibles = [f"{i}" for i in range(len(self.orders))] + [
-                "q"]
+            # f-Strings für User Output (oder print) aufheben, nicht für Liste definieren, da
+            # immer lieber mit str() arbeiten, dann ist klar was gemeint wird
+            possibles = [str(i) for i in range(len(self.orders))] + ["q"]
 
             #  Zeigt die bisherigen Bestellungen an
             self.show_order(self.orders)  # , mod_list
             order_to_delete = input(
                 "Which order would you like to delete? \n "
-                "(Insert index or abort 'q'): ")
+                "(Insert index or abort 'q'): "
+            )
 
             if order_to_delete not in possibles:
                 continue
-            elif order_to_delete == "q":
+            if order_to_delete == "q":
                 break
-            else:
-                order_to_delete = int(order_to_delete)
-                deleted_order = self.orders.pop(order_to_delete)
-                print(
-                    f"{deleted_order.product.name} was deleted!")  # order.product.name
 
-    def add_previous_orders(self, prev_order):
+            order_to_delete = int(order_to_delete)
+            deleted_order = self.orders.pop(order_to_delete)
+            print(f"{deleted_order.product.name} was deleted!")  # order.product.name
+
+    def add_previous_orders(self, prev_order: list[Product]):
         """
 
         :param prev_order: list of orders (objects of type Product)
@@ -229,17 +230,17 @@ class OrderTable(Menu):
                 continue
 
             if not self.check_product_in_menu(prod_str):
-                print(
-                    "That product does not exist in our Menu, please try again \n")
+                print("That product does not exist in our Menu, please try again \n")
                 continue
             product = OrderTable.get_prod_from_prod_str(self, prod_str)
             mod_list = OrderTable.extra_info(self, prod_str)
             while True:
                 try:
-                    quantity = int(input(
-                        f"Please input the amount of {prod_str} of you would "
-                        f"like to order (a number): "
-                    )
+                    quantity = int(
+                        input(
+                            f"Please input the amount of {prod_str} of you would "
+                            f"like to order (a number): "
+                        )
                     )
                     break
                 except ValueError:
