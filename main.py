@@ -23,11 +23,10 @@ def show_tables(tables):
 def main():
     """
     Das hier wird die main methode, die das ganze System steuert.
-    :return:
+    :return: None
     """
-    tables = {}
-    # ICH habe die Idee hinter dem Dictionary geändert, es soll nun
-    # die Elemente {TABLE_NAME: ORDERPRODUCT_objekt} haben
+    tables = {}  # Dictionary, wo alle Tische mit ihren Bestellungen
+    # aufgelistet werden.
 
     while True:
         show_tables(tables)
@@ -55,11 +54,19 @@ def main():
                 table.show_order()
                 tables[table_name] = table
             elif inp == "check":
-                tables.pop(table_name)
-                print(f"the table {table_name} has been removed from available tables")
-                print(f"The receipt can be found in the file {table_name}_receipt.txt")
-                table.get_receipt(receipt_path=f"{table_name}_receipt.txt")
-                break
+                if table_name in tables:  #### Fehlerausgabe, wenn man die
+                    #### Rechnung bestellt hat, ohne davor etwas zu bestellen.
+                    print(
+                        f"the table {table_name} has been removed "
+                        f"from available tables"
+                    )
+                    print(
+                        f"The receipt can be found in the "
+                        f"file {table_name}_receipt.txt"
+                    )
+                    table.get_receipt(receipt_path=f"{table_name}_receipt.txt")
+                    tables.pop(table_name)
+                    break
 
 
 if __name__ == "__main__":

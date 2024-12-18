@@ -6,6 +6,11 @@ __author__ = "7419816, Velesco, 7742219, Kowalke Jeri"
 
 
 class Product:
+    """
+    Erstellt das Objekt Product; dieses soll die Attribute haben, die
+    durch die csv Datei geliefert werden.
+    """
+
     def __init__(self, name: str, typ: str, category: str, price: float):
         self.name = name
         self.typ = typ
@@ -14,7 +19,7 @@ class Product:
 
 
 class Menu:
-    """Erstellt das Menü als Liste von Produt Objekten
+    """Erstellt das Menü als Liste von Produkt Objekten
 
     :param csv_path: Der Path vom Menü als csv
     :param products: Liste von Produkten
@@ -25,7 +30,9 @@ class Menu:
         self.products = []
 
     def create_menu(self):
-        """Befüllt die Liste products mit Objekten Product durch lesen der csv Datei"""
+        """Befüllt die Liste products mit Objekten Product
+        durch Lesen der csv Datei
+        """
         with open(self.csv_path, mode="r", encoding="utf-8") as csv_file:
             # Die erste Zeile ist fuer unsere implementierung nicht relevant
             next(csv_file)
@@ -45,7 +52,7 @@ class Menu:
                 )
 
     def get_product_info(self, product_name: str):
-        """Findet das entsprechende Objekt falls es exisitiert, sonst None
+        """Findet das entsprechende Objekt, falls es existiert, sonst None.
 
         :param product_name: Der Name von was bestellt werden soll
         :return: Das entsprechende Objekt Product
@@ -61,11 +68,18 @@ class Menu:
         """Printet das Menü in der Konsole aus"""
         for product in self.products:
             print(
-                f"{product.name},Preis:{product.price},Kategorie:{product.category},{product.typ}"
+                f"{product.name},Preis:{product.price},"
+                f"Kategorie:{product.category},{product.typ}"
             )
 
 
 class OrderProduct:
+    """
+    Objekte OrderProduct, sind eine Bestellung. Diese haben als
+    Attribute, das, was sie sind; wie viele bestellt wurden; und extra Wünsche,
+    falls angefordert.
+    """
+
     def __init__(self, product: Product, quantity: int, extra_info: list):
         self.product = product
         self.quantity = quantity
@@ -79,16 +93,19 @@ class OrderProduct:
         """
         price_of_item = self.product.price
         for i in self.extra_info:
-            if "extra" in i:
+            if "extra" in i:  # simpel gehalten, das extra muss in der Order
+                # genannt werden.
                 price_of_item += 1
         return price_of_item * self.quantity
 
 
 class OrderTable(Menu):
-    """Bestellungen für einen einzelnen Tisch
-
+    """Bestellungen für einen einzelnen Tisch. Soll als
+    OrderTable kriegt alles von Menu vererbt, um Zugriff auf die Produkte der
+    csv-Datei zu erlangen.
     :param orders: Liste von OrderProducts
-    :param order_finished: Ob die Bestellung noch ausgeführt werden soll oder nicht
+    :param order_finished: Ob der Bestellprozess bereits abgeschlossen ist,
+    oder auch nicht.
     """
 
     def __init__(self, csv_path: str):
@@ -97,7 +114,7 @@ class OrderTable(Menu):
         self.order_finished = False
 
     def check_product_in_menu(self, product_str: str):
-        """Schaut ob das Produkt im Menü vorhanden ist
+        """Schaut, ob das Produkt im Menü vorhanden ist
 
         :param product_str: Der Name vom Produkt
         :return: True or False
@@ -116,9 +133,12 @@ class OrderTable(Menu):
         :rtype: Product Objekt
         """
         for i in self.products:
-            if product_str == i.name:
+            if product_str == i.name:  # das bedeutet, dass strikt auf
+                # Groß- und Kleinschreibung geachtet wird.
                 return i
-        return Product("", "", "", 0)  # Sollte nicht vorkommen
+        return Product("", "", "", 0)
+        # Sollte nicht vorkommen, da mit der Methode oben drüber auf Existenz
+        # geprüft werden soll, bevor diese ausgeführt wird.
 
     def extra_info(self, prod_str):
         """Funktion welche nach Sonderwünschen in der Konsole fragt
@@ -131,7 +151,6 @@ class OrderTable(Menu):
         :return: Alle Sonderwünsche
         :rtype: list
         """
-        # Could be a function of OrderProducts maybe?
         mod_list = []
         modification = input(
             f"Please enter a special request you would like to add to {prod_str} "
@@ -139,28 +158,23 @@ class OrderTable(Menu):
         )
         if modification != "":
             mod_list.append(modification)
-            while True:
+            while True:  #
                 modification = input(
                     f"Please enter another special request you would like to add to {prod_str}"
                     "(Press enter if you have no additional special requests): \n"
                 )
-                if modification == "":
+                if modification == "":  # Leer ist die Abbruchbedingung.
                     break
                 mod_list.append(modification)
 
         return mod_list
 
     def show_order(self):
-        # Die Idee bei solchen Funktionen ist sich selbst zu referenzieren und nicht
-        # auf eine potenziellen unabhängige Liste orders zuzugreifen, die Variable
-        # self hat bereits orders als Attribut
         """
         Soll die bereits gegebenen Orders zeigen bzw. auch
         ordnen, sodass man mit einem Index darauf zugreifen kann.
-        :param orders:
-        :return:
+        :return: None
         """
-
         print("Your current orders are: \n")
         for i, order in enumerate(self.orders):
             print(
@@ -168,25 +182,18 @@ class OrderTable(Menu):
                 f", Anzahl {order.quantity}\n"
             )
 
-        # Muss man hier was returnen oder ist soll das Nur Output sein?
-        return
-
-    def delete_order(self):  # , order, mod_list
+    def delete_order(self):
         """
         Erst anzeigen, welche orders da sind und aus denen dann eine
-        löschen. Man soll so viele löschen könne wie man will
+        löschen. Man soll so viele löschen könne wie man will.
         Mit User input!
-        können wie man will und abbrechen mit q.
-        :return:
+        :return: None, da wieder direkt orders bearbeitet wird.
         """
         while True:
             #  für Robustheit
-            # f-Strings für User Output (oder print) aufheben, nicht für Liste definieren, da
-            # immer lieber mit str() arbeiten, dann ist klar was gemeint wird
             possibles = [str(i) for i in range(len(self.orders))] + ["q"]
-
             #  Zeigt die bisherigen Bestellungen an
-            OrderTable.show_order(self)  # , mod_list
+            OrderTable.show_order(self)
             order_to_delete = input(
                 "Which order would you like to delete? \n "
                 "(Insert index or abort 'q'): "
@@ -199,31 +206,23 @@ class OrderTable(Menu):
 
             order_to_delete = int(order_to_delete)
             deleted_order = self.orders.pop(order_to_delete)
-            print(f"{deleted_order.product.name} was deleted!")  # order.product.name
-
-    def add_previous_orders(self, prev_order: list[Product]):
-        # Brauchen wir glaube ich nicht mehr
-        """
-
-        :param prev_order: list of orders (objects of type Product)
-        :return:
-        """
-        for order in prev_order:
-            self.orders.append(order)
-        return self.orders
+            print(
+                f"{deleted_order.product.name} was deleted!")
 
     def get_orders(self):
-        """CLI welche nach Inputs fragt und Bestellungen sammelt
+        """CLI (Command line interface) welche nach Inputs fragt und
+        Bestellungen sammelt.
+        Jede aufgegebene Bestellung (ein Objekt OrderProduct)
+        wird im Attribut orders gespeichert.
 
-        :param orders: mögliche Bestellungen von davor
-        :return:
-        :rtype:
+        :return: None, es wird direkt orders bearbeitet.
         """
         super().create_menu()
         super().show_menu()
         while not self.order_finished:
             prod_str = input(
-                "\nPlease input Product you would like to order\n"
+                "\nPlease input Product you would like to order \n"
+                "Pay attention to upper-/ lowercase letters! \n"
                 "[Enter 'q' if you are done ordering] \n"
                 "[Enter 'r' if you want to remove some previous order]: "
             )
@@ -234,12 +233,13 @@ class OrderTable(Menu):
                 continue
 
             if not self.check_product_in_menu(prod_str):
-                print("That product does not exist in our Menu, please try again \n")
+                print(
+                    "That product does not exist in our Menu, please try again \n")
                 continue
             product = OrderTable.get_prod_from_prod_str(self, prod_str)
             mod_list = OrderTable.extra_info(self, prod_str)
             while True:
-                try:
+                try:  # Für Robustheit
                     quantity = int(
                         input(
                             f"Please input the amount of {prod_str} of you would "
@@ -253,7 +253,8 @@ class OrderTable(Menu):
             self.orders.append(order)
 
     def calculate_sum(self):
-        """Berechnet Summe der Preise aller Bestellungen
+        """Berechnet Summe der Preise aller Bestellungen inklusive den
+        extra Wünschen.
 
         :return: Die Summe
         :rtype: float
@@ -287,11 +288,6 @@ class OrderTable(Menu):
                 + "The total sum of your order is : "
                 + str(OrderTable.calculate_sum(self))
             )
-
-        # Zeigt die Rechnung in der Konsole
-        # with open(receipt_path, mode="r", encoding="utf-8") as receipt_file:
-        #    print("\nInhalt der Rechnung:")
-        #    print(receipt_file.read())
 
 
 if __name__ == "__main__":
