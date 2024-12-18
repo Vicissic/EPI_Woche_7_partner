@@ -12,10 +12,26 @@ q
 table2
 order
 PIZZA-MARGARITA
-no tomatos
+no tomatoes
 
 1
 q
+check
+table1
+order
+r
+0
+q
+q
+q
+table3
+order
+COLA (0.4)
+
+3
+q
+q
+table1
 check
 q
 q

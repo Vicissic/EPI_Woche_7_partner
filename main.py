@@ -1,5 +1,5 @@
 """
-Main aufruf
+Hier ist die main Funktion definiert, die das ganze System startet und stoppt.
 """
 
 __author__ = "7419816, Velesco, 7742219, Kowalke Jeri"
@@ -36,9 +36,8 @@ def main():
             "type 'q' to abort): "
         )
         if table_name == "q":
-            print("Thanks for using our software and have a nice day")
+            print("\nThanks for using our software and have a nice day")
             break
-        # .keys() muss man nicht spezifizieren
         table = tables.get(table_name, r.OrderTable("food.csv"))
         while True:
             inp = input(
@@ -54,8 +53,7 @@ def main():
                 table.show_order()
                 tables[table_name] = table
             elif inp == "check":
-                if table_name in tables:  #### Fehlerausgabe, wenn man die
-                    #### Rechnung bestellt hat, ohne davor etwas zu bestellen.
+                if table_name in tables:
                     print(
                         f"the table {table_name} has been removed "
                         f"from available tables"
@@ -70,4 +68,12 @@ def main():
 
 
 if __name__ == "__main__":
+    # Test für show_table (nicht so sinnvoll meiner Meinung nach)
+    # tables = {"tabl1": ["Beer", "Burger"], "tabl3": ["Cola"]}
+    # show_tables(tables)
+
+    # Test in der Konsole (test_inputs.txt, main.py, restaurant.py
+    # muss im selben Ordner liegen)
+    # 'python main.py < text_inputs.txt' in einer Unix-Konsole ausführen
+
     main()

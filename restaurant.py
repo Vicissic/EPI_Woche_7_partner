@@ -1,6 +1,8 @@
-"""Aufgabenstellung: Ein Restaurant soll eine Software bekommen, 
-welche die Bestellungen verwaltet und die Rechnungen erstellt. Es 
-soll für jeden Tisch einzeln betrachtet werden können. """
+"""
+Aufgabenstellung: Ein Restaurant soll eine Software bekommen,
+welche die Bestellungen verwaltet und die Rechnungen erstellt. Es
+soll für jeden Tisch einzeln betrachtet werden können.
+"""
 
 __author__ = "7419816, Velesco, 7742219, Kowalke Jeri"
 
@@ -144,7 +146,7 @@ class OrderTable(Menu):
         """Funktion welche nach Sonderwünschen in der Konsole fragt
 
         Wenn etwas extra hinzugefügt wird +1 Euro.
-        Wenn etwas weggelasssen werden soll +0 Euro.
+        Wenn etwas weggelassen werden soll +0 Euro.
 
         :param prod_str: Der Name vom Produkt
         :type prod_str: str
@@ -153,20 +155,23 @@ class OrderTable(Menu):
         """
         mod_list = []
         modification = input(
-            f"Please enter a special request you would like to add to {prod_str} "
+            f"Please enter a special request you would like "
+            f"to add to {prod_str}\n(enter 'extra' in front of your request "
+            f"if you wish for something additionally)\n"
             "(Press enter if you have no additional requests): \n"
         )
         if modification != "":
             mod_list.append(modification)
             while True:  #
                 modification = input(
-                    f"Please enter another special request you would like to add to {prod_str}"
-                    "(Press enter if you have no additional special requests): \n"
+                    f"Please enter another special request you would "
+                    f"like to add to {prod_str}"
+                    "(Press enter if you have no additional "
+                    "special requests): \n"
                 )
                 if modification == "":  # Leer ist die Abbruchbedingung.
                     break
                 mod_list.append(modification)
-
         return mod_list
 
     def show_order(self):
@@ -234,7 +239,8 @@ class OrderTable(Menu):
 
             if not self.check_product_in_menu(prod_str):
                 print(
-                    "That product does not exist in our Menu, please try again \n")
+                    "That product does not exist in our Menu, "
+                    "please try again \n")
                 continue
             product = OrderTable.get_prod_from_prod_str(self, prod_str)
             mod_list = OrderTable.extra_info(self, prod_str)
@@ -242,8 +248,8 @@ class OrderTable(Menu):
                 try:  # Für Robustheit
                     quantity = int(
                         input(
-                            f"Please input the amount of {prod_str} of you would "
-                            f"like to order (a number): "
+                            f"Please input the amount of {prod_str} of you "
+                            f"would like to order (a number): "
                         )
                     )
                     break
@@ -291,15 +297,7 @@ class OrderTable(Menu):
 
 
 if __name__ == "__main__":
-    ####WICHTIG UND NUTZVOLL:
-    ####VICTOR NUTZT als Command im Terminal: "python restaurant.py < test_inputs.txt" als input
-    ####für testen, damit man nicht immer wieder das selbe eingeben muss.
-    #### Sonst wie gewohnt einfach python restaurant.py in die Konsole eingeben.
-    ####classes.png erstellt mit Befehl "pyreverse -o png restaurant.py" (pylint dependency)
-    # TODO: Implement Testfälle für alle Funktionen, UML Diagramm und Dokumentation
-    # t = Tables()
-    # t.input_order()
-
-    b = OrderTable("food.csv")
-    b.get_orders()
-    b.get_receipt()
+    # b = OrderTable("food.csv")
+    # b.get_orders()
+    # b.get_receipt()
+    pass
